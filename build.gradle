@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
 group 'br.com.finalcraft'
-version '1.0.1'
+version '1.0.2'
 
 minecraft {
     mappings channel: 'official', version: '1.16.5'
@@ -89,4 +89,26 @@ publishing {
             }
         }
     }
+}
+
+task modifyModuleFile {
+    doLast {
+        print "Removing dependencies from module.json publication!"
+        def moduleFile = file("${buildDir}/publications/petrus/module.json")
+        if (moduleFile.exists()) {
+            def moduleJson = new groovy.json.JsonSlurper().parseText(moduleFile.text)
+            moduleJson.variants.each { variant ->
+                variant.dependencies.removeAll { dep ->
+                    true
+                }
+            }
+            moduleFile.text = groovy.json.JsonOutput.toJson(moduleJson)
+        }
+    }
+}
+
+
+// Ensure the modifyModuleFile task runs after the publication has been generated
+tasks.withType(AbstractPublishToMaven).configureEach {
+    dependsOn modifyModuleFile
 }
