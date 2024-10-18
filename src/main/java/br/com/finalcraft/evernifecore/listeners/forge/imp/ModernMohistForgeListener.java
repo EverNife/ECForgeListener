@@ -5,8 +5,6 @@ import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
 import br.com.finalcraft.evernifecore.reflection.MethodInvoker;
 import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.EventBus;
-import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.plugin.Plugin;
 
 public class ModernMohistForgeListener implements IForgeListener {
@@ -17,15 +15,15 @@ public class ModernMohistForgeListener implements IForgeListener {
     );
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, IEventBus... eventBus) {
-        for (IEventBus bus : eventBus) {
-            MohistEventBus_register.invoke(null, (EventBus) bus, listener);
+    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
+        for (Object bus : eventBus) {
+            MohistEventBus_register.invoke(null, bus, listener);
         }
     }
 
     @Override
     public void registerClass(Plugin plugin, ECListener listener) {
-        MohistEventBus_register.invoke(null, (EventBus) MinecraftForge.EVENT_BUS, listener);
+        MohistEventBus_register.invoke(null, MinecraftForge.EVENT_BUS, listener);
     }
 
 }

@@ -5,7 +5,6 @@ import br.com.finalcraft.evernifecore.listeners.base.ECListener;
 import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
 import com.mohistmc.api.event.BukkitHookForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +24,7 @@ public class MohistForgeListener implements IForgeListener, ECListener {
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, IEventBus... eventBus) {
+    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
         registerClass(plugin, listener); //Mohist don't use BUS to register
     }
 
