@@ -15,14 +15,14 @@ public class ModernMohistForgeListener implements IForgeListener {
     );
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
+    public void registerListener(Plugin plugin, ECListener listener, Object... eventBus) {
         for (Object bus : eventBus) {
             MohistEventBus_register.invoke(null, bus, listener);
         }
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener) {
+    public void registerListener(Plugin plugin, ECListener listener) {
         MohistEventBus_register.invoke(null, MinecraftForge.EVENT_BUS, listener);
     }
 

@@ -15,14 +15,14 @@ public class CrucibleForgeListener implements IForgeListener {
     );
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
+    public void registerListener(Plugin plugin, ECListener listener, Object... eventBus) {
         for (Object bus : eventBus) {
             CrucibleEventBus_register.invoke(null, plugin, bus, listener);
         }
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener) {
+    public void registerListener(Plugin plugin, ECListener listener) {
         CrucibleEventBus_register.invoke(null, plugin, MinecraftForge.EVENT_BUS, listener);
     }
 

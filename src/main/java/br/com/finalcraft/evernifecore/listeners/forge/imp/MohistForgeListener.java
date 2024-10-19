@@ -24,12 +24,12 @@ public class MohistForgeListener implements IForgeListener, ECListener {
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
-        registerClass(plugin, listener); //Mohist don't use BUS to register
+    public void registerListener(Plugin plugin, ECListener listener, Object... eventBus) {
+        registerListener(plugin, listener); //Mohist don't use BUS to register
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener) {
+    public void registerListener(Plugin plugin, ECListener listener) {
 
         for (Method declaredMethod : listener.getClass().getDeclaredMethods()) {
             declaredMethod.setAccessible(true);

@@ -27,18 +27,18 @@ public class ForgeListener {
         }
     }
 
-    public static void registerClass(Plugin plugin, ECListener listener, IEventBus... eventBus){
+    public static void registerListener(Plugin plugin, ECListener listener, IEventBus... eventBus){
         if (INSTANCE == null){
             throw new IllegalStateException("Tried to register ForgeEvents but there is no IForgeListener available for EverNifeCore on this Server.");
         }
-        INSTANCE.registerClass(plugin, listener, eventBus);
+        INSTANCE.registerListener(plugin, listener, eventBus);
     }
 
-    public static void registerClass(Plugin plugin, ECListener listener){
+    public static void registerListener(Plugin plugin, ECListener listener){
         if (INSTANCE == null){
             throw new IllegalStateException("Tried to register ForgeEvents but there is no IForgeListener available for EverNifeCore on this Server.");
         }
-        INSTANCE.registerClass(plugin, listener);
+        INSTANCE.registerListener(plugin, listener);
     }
 
 }

@@ -10,14 +10,14 @@ import org.bukkit.plugin.Plugin;
 public class ArclightForgeListener implements IForgeListener {
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus) {
+    public void registerListener(Plugin plugin, ECListener listener, Object... eventBus) {
         for (IEventBus bus : (IEventBus[]) eventBus) {
             Arclight.registerForgeEvent(plugin, bus, listener);
         }
     }
 
     @Override
-    public void registerClass(Plugin plugin, ECListener listener) {
+    public void registerListener(Plugin plugin, ECListener listener) {
         Arclight.registerForgeEvent(plugin, MinecraftForge.EVENT_BUS, listener);
     }
 

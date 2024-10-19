@@ -13,7 +13,7 @@ public interface IForgeListener {
      * @param eventBus The EventBus to register the listener to.
      *                 Can be anything that is accepted by the specific implementation
      */
-    public void registerClass(Plugin plugin, ECListener listener, Object... eventBus);
+    public void registerListener(Plugin plugin, ECListener listener, Object... eventBus);
 
     /**
      * Register a Listener to the default EventBuses
@@ -27,6 +27,6 @@ public interface IForgeListener {
      * @param plugin The plugin that is registering the listener
      * @param listener The listener to register
      */
-    public void registerClass(Plugin plugin, ECListener listener);
+    public void registerListener(Plugin plugin, ECListener listener);
 
 }
