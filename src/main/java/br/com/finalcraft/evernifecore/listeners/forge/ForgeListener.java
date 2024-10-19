@@ -6,7 +6,6 @@ import br.com.finalcraft.evernifecore.listeners.forge.imp.CrucibleForgeListener;
 import br.com.finalcraft.evernifecore.listeners.forge.imp.ModernMohistForgeListener;
 import br.com.finalcraft.evernifecore.listeners.forge.imp.MohistForgeListener;
 import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
-import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.plugin.Plugin;
 
 public class ForgeListener {
@@ -27,7 +26,7 @@ public class ForgeListener {
         }
     }
 
-    public static void registerListener(Plugin plugin, ECListener listener, IEventBus... eventBus){
+    public static void registerListener(Plugin plugin, ECListener listener, Object... eventBus){
         if (INSTANCE == null){
             throw new IllegalStateException("Tried to register ForgeEvents but there is no IForgeListener available for EverNifeCore on this Server.");
         }
