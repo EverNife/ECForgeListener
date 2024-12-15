@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
 group 'br.com.finalcraft'
-version '1.0.4'
+version '1.0.5'
 
 minecraft {
     mappings channel: 'official', version: '1.16.5'
