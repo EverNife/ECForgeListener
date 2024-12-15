@@ -11,8 +11,11 @@ public class ArclightForgeListener implements IForgeListener {
 
     @Override
     public void registerListener(Plugin plugin, ECListener listener, Object... eventBus) {
-        for (IEventBus bus : (IEventBus[]) eventBus) {
-            Arclight.registerForgeEvent(plugin, bus, listener);
+        for (Object bus : eventBus) {
+            if (bus instanceof IEventBus){
+                IEventBus iEventBus = (IEventBus) bus;
+                Arclight.registerForgeEvent(plugin, iEventBus, listener);
+            }
         }
     }
 
