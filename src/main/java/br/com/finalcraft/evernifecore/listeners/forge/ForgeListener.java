@@ -15,13 +15,16 @@ public class ForgeListener {
             //Present on 1.7.10
             INSTANCE = new CrucibleForgeListener();
         }else if (FCReflectionUtil.isClassLoaded("io.izzel.arclight.api.Arclight")){
-            //Present on 1.12.2 and 1.16.5 and 1.20.1
+            //Present on 1.12.2 and 1.16.5 and 1.20.x
             INSTANCE = new ArclightForgeListener();
         }else if (FCReflectionUtil.isClassLoaded("com.mohistmc.forge.MohistEventBus")){
-            //Present on 1.20.1
+            //Present on 1.20.x
             INSTANCE = new ModernMohistForgeListener();
         }else if (FCReflectionUtil.isClassLoaded("com.mohistmc.api.event.BukkitHookForgeEvent")){
             //present on 1.12.2 and 1.16.5
+            INSTANCE = new MohistForgeListener();
+        }else if (FCReflectionUtil.isClassLoaded("catserver.api.bukkit.ForgeEventV2")){
+            //present on 1.16.5
             INSTANCE = new MohistForgeListener();
         }
     }
