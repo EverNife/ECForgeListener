@@ -4,7 +4,13 @@ This is a wrapper intended to be used inside https://github.com/EverNife/EverNif
 
 It creates a easy way to register event handlers on different types of Forge Platforms.
 
-Right now supports Crucible (1.7.10) Mohist (1.12.2, 1.16.5 and 1.20.1) and Archligh (1.16.5 and 1.20.1).
+Right now supports:
+- 1.7.10 : Crucible
+- 1.12.2 : Mohist
+- 1.16.5 : Mohist and Arclight
+- 1.20.1 : Mohist and Arclight
+- 1.20.2 : Mohist and Arclight
+- 1.21.1 : Mohist and Arclight
 
 The idea is to register Handlers at a bukkit plugin like this 
 
@@ -27,4 +33,6 @@ The idea is to register Handlers at a bukkit plugin like this
     }
 ```
 
-On Mohist it does not require the BUS, but on Archlight it requires the BUS. So, its a good idea to always let the bus over there :D
+On some versions of Mohist it does not require the Event.BUS to register events, but on Arclight it is always required.
+
+So, its a good idea to always let the bus over there :D

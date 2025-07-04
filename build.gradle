@@ -43,7 +43,7 @@ repositories {
     maven {
         url = "https://maven.petrus.dev/public"
     }
-    maven { url 'https://maven.izzel.io/releases' } //ARCHLIGHT
+    maven { url 'https://maven.izzel.io/releases' } //Arclight
 }
 
 dependencies {
