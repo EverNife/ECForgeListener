@@ -3,6 +3,8 @@ package br.com.finalcraft.evernifecore.listeners.forge.imp;
 import br.com.finalcraft.evernifecore.EverNifeCore;
 import br.com.finalcraft.evernifecore.listeners.base.ECListener;
 import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
+import br.com.finalcraft.evernifecore.reflection.MethodInvoker;
+import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
 import com.mohistmc.api.event.BukkitHookForgeEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +20,10 @@ import java.util.function.Consumer;
 public class MohistForgeListener implements IForgeListener, ECListener {
 
     private static Class SubscribeEventClass;
+    private static final MethodInvoker<Object> BukkitHookForgeEvent_getEvent = FCReflectionUtil.getMethod(
+            BukkitHookForgeEvent.class,
+            "getEvent"
+    );
     static {
         try {
             // Modern +1.16.5 Forge
@@ -75,7 +81,7 @@ public class MohistForgeListener implements IForgeListener, ECListener {
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.MONITOR)
     public void onBukkitHookForgeEvent(BukkitHookForgeEvent event) {
-        Object forgeEvent = event.getEvent();
+        Object forgeEvent = BukkitHookForgeEvent_getEvent.invoke(event);
         List<Consumer> consumers = eventHandlers.get(forgeEvent.getClass());
         if (consumers != null){
             for (Consumer consumer : consumers){
