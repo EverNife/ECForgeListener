@@ -6,17 +6,16 @@ import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
 import br.com.finalcraft.evernifecore.reflection.MethodInvoker;
 import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
 import com.mohistmc.api.event.BukkitHookForgeEvent;
+import lombok.extern.log4j.Log4j2;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
+@Log4j2
 public class MohistForgeListener implements IForgeListener, ECListener {
 
     private static Class SubscribeEventClass;
@@ -77,26 +76,42 @@ public class MohistForgeListener implements IForgeListener, ECListener {
     //  Create Listener for the Core Events
     //------------------------------------------------------------------------------------------------------------------
 
-    private HashMap<Class, List<Consumer>> eventHandlers = new LinkedHashMap<>();
+    private Map<Class<?>, List<Consumer<?>>> eventHandlers = new LinkedHashMap<>();
+    private Map<Class<?>, List<Consumer<?>>> eventHandlerCache = new LinkedHashMap<>();
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.MONITOR)
     public void onBukkitHookForgeEvent(BukkitHookForgeEvent event) {
         Object forgeEvent = BukkitHookForgeEvent_getEvent.invoke(event);
-        List<Consumer> consumers = eventHandlers.get(forgeEvent.getClass());
-        if (consumers != null){
-            for (Consumer consumer : consumers){
-                try {
-                    consumer.accept(forgeEvent);
-                }catch (Throwable e){
-                    e.printStackTrace();
+        Class<?> eventClass = forgeEvent.getClass();
+
+        List<Consumer<?>> consumers = eventHandlerCache.get(eventClass);
+        if (consumers == null) {
+            consumers = new ArrayList<>();
+            for (Map.Entry<Class<?>, List<Consumer<?>>> entry : eventHandlers.entrySet()) {
+                if (entry.getKey().isAssignableFrom(eventClass)) {
+                    consumers.addAll(entry.getValue());
                 }
+            }
+            eventHandlerCache.put(eventClass, consumers);
+        }
+
+        // Call all consumers
+        for (int i = 0; i < consumers.size(); i++) {
+            Consumer consumer = consumers.get(i);
+            try {
+                consumer.accept(forgeEvent);
+            } catch (Throwable e) {
+                log.error("[ECForgeListener] Error while invoking ForgeEvent " + eventClass.getSimpleName() + " on consumer " + consumer.getClass().getName(), e);
             }
         }
     }
 
     public <T> void addEventHandler(Class<T> clazz, Consumer<T> consumer){
-        List<Consumer> consumers = eventHandlers.computeIfAbsent(clazz, k -> new ArrayList<>());
+        List<Consumer<?>> consumers = eventHandlers.computeIfAbsent(clazz, k -> new ArrayList<>());
         consumers.add(consumer);
+
+        // Clear cache, because handler mapping has changed
+        eventHandlerCache.clear();
     }
 
 }
