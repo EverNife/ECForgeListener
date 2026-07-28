@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class CatServerForgeListener implements IForgeListener, ECListener {
 
     public CatServerForgeListener() {
-        ECListener.register(EverNifeCore.instance, this);
+        ECListener.register(EverNifeCore.getEcPluginData(), this);
     }
 
     @Override

@@ -5,25 +5,25 @@ import br.com.finalcraft.evernifecore.listeners.forge.imp.ArclightForgeListener;
 import br.com.finalcraft.evernifecore.listeners.forge.imp.CrucibleForgeListener;
 import br.com.finalcraft.evernifecore.listeners.forge.imp.ModernMohistForgeListener;
 import br.com.finalcraft.evernifecore.listeners.forge.imp.MohistForgeListener;
-import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
+import br.com.finalcraft.everylibs.reflection.FCReflectionUtil;
 import org.bukkit.plugin.Plugin;
 
 public class ForgeListener {
 
     private static IForgeListener INSTANCE; static {
-        if (FCReflectionUtil.isClassLoaded("io.github.crucible.api.CrucibleEventBus")){
+        if (FCReflectionUtil.getClasses().isClassLoaded("io.github.crucible.api.CrucibleEventBus")){
             //Present on 1.7.10
             INSTANCE = new CrucibleForgeListener();
-        }else if (FCReflectionUtil.isClassLoaded("io.izzel.arclight.api.Arclight")){
+        }else if (FCReflectionUtil.getClasses().isClassLoaded("io.izzel.arclight.api.Arclight")){
             //Present on 1.12.2 and 1.16.5 and 1.20.x
             INSTANCE = new ArclightForgeListener();
-        }else if (FCReflectionUtil.isClassLoaded("com.mohistmc.forge.MohistEventBus")){
+        }else if (FCReflectionUtil.getClasses().isClassLoaded("com.mohistmc.forge.MohistEventBus")){
             //Present on 1.20.x
             INSTANCE = new ModernMohistForgeListener();
-        }else if (FCReflectionUtil.isClassLoaded("com.mohistmc.api.event.BukkitHookForgeEvent")){
+        }else if (FCReflectionUtil.getClasses().isClassLoaded("com.mohistmc.api.event.BukkitHookForgeEvent")){
             //present on 1.12.2 and 1.16.5
             INSTANCE = new MohistForgeListener();
-        }else if (FCReflectionUtil.isClassLoaded("catserver.api.bukkit.ForgeEventV2")){
+        }else if (FCReflectionUtil.getClasses().isClassLoaded("catserver.api.bukkit.ForgeEventV2")){
             //present on 1.16.5
             INSTANCE = new MohistForgeListener();
         }

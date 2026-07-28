@@ -1,0 +1,34 @@
+[versions]
+# Project version: the single source of truth.
+ecforgelistener = "1.0.7"
+
+# FinalCraft libraries
+evernifecore = "3.0.1"
+everylibs = "1.0.0"
+
+# FinalCraft fork: hooks a Java 25 javac and only lifts javac's syntax check, so this module can
+# write modern syntax and still emit options.release bytecode.
+jabel = "1.2.0"
+
+# Server and hybrid-platform APIs
+spigot = "1.19.2-R0.1-SNAPSHOT"
+arclight-api = "1.3.0"
+# EventBus line that Forge 1.16.5-36.2.x ships, which is the API these adapters are written against.
+forge-eventbus = "4.0.0"
+
+lombok = "1.18.46"
+# Only reached through Lombok's @Log4j2, which cannot generate its field without the type on the
+# classpath. Hybrid servers all ship log4j themselves.
+log4j = "2.20.0"
+
+[libraries]
+evernifecore-minecraft = { module = "br.com.finalcraft:evernifecore-minecraft", version.ref = "evernifecore" }
+everylibs-reflection = { module = "br.com.finalcraft.everylibs:everylibs-reflection", version.ref = "everylibs" }
+jabel = { module = "br.com.finalcraft:jabel", version.ref = "jabel" }
+
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+arclight-api = { module = "io.izzel.arclight:arclight-api", version.ref = "arclight-api" }
+forge-eventbus = { module = "net.minecraftforge:eventbus", version.ref = "forge-eventbus" }
+
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }

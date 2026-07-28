@@ -3,8 +3,8 @@ package br.com.finalcraft.evernifecore.listeners.forge.imp;
 import br.com.finalcraft.evernifecore.EverNifeCore;
 import br.com.finalcraft.evernifecore.listeners.base.ECListener;
 import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
-import br.com.finalcraft.evernifecore.reflection.MethodInvoker;
-import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
+import br.com.finalcraft.everylibs.reflection.FCReflectionUtil;
+import br.com.finalcraft.everylibs.reflection.MethodInvoker;
 import com.mohistmc.api.event.BukkitHookForgeEvent;
 import lombok.extern.log4j.Log4j2;
 import org.bukkit.event.EventHandler;
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public class MohistForgeListener implements IForgeListener, ECListener {
 
     private static Class SubscribeEventClass;
-    private static final MethodInvoker<Object> BukkitHookForgeEvent_getEvent = FCReflectionUtil.getMethod(
+    private static final MethodInvoker<Object> BukkitHookForgeEvent_getEvent = FCReflectionUtil.getMethods().getMethod(
             BukkitHookForgeEvent.class,
             "getEvent"
     );
@@ -38,7 +38,7 @@ public class MohistForgeListener implements IForgeListener, ECListener {
     }
 
     public MohistForgeListener() {
-        ECListener.register(EverNifeCore.instance, this);
+        ECListener.register(EverNifeCore.getEcPluginData(), this);
     }
 
     @Override

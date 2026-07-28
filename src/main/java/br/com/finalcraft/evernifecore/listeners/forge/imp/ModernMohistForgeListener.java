@@ -2,15 +2,15 @@ package br.com.finalcraft.evernifecore.listeners.forge.imp;
 
 import br.com.finalcraft.evernifecore.listeners.base.ECListener;
 import br.com.finalcraft.evernifecore.listeners.forge.IForgeListener;
-import br.com.finalcraft.evernifecore.reflection.MethodInvoker;
-import br.com.finalcraft.evernifecore.util.FCReflectionUtil;
+import br.com.finalcraft.everylibs.reflection.FCReflectionUtil;
+import br.com.finalcraft.everylibs.reflection.MethodInvoker;
 import net.minecraftforge.common.MinecraftForge;
 import org.bukkit.plugin.Plugin;
 
 public class ModernMohistForgeListener implements IForgeListener {
 
-    private static MethodInvoker<Object> MohistEventBus_register = FCReflectionUtil.getMethod(
-            FCReflectionUtil.getClass("com.mohistmc.forge.MohistEventBus"),
+    private static MethodInvoker<Object> MohistEventBus_register = FCReflectionUtil.getMethods().getMethod(
+            FCReflectionUtil.getClasses().getClass("com.mohistmc.forge.MohistEventBus"),
             "register"
     );
 

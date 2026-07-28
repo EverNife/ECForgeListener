@@ -1,65 +1,88 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
-    }
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
 }
 
-apply plugin: 'java'
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'maven-publish'
+group = 'br.com.finalcraft'
+version = libs.versions.ecforgelistener.get()
 
-group 'br.com.finalcraft'
-version '1.0.6'
-
-minecraft {
-    mappings channel: 'official', version: '1.16.5'
+// One toolchain for the whole build: launch Gradle with JDK 25 and it compiles everything. The
+// Jabel block below is what keeps the emitted bytecode runnable on the old servers this targets.
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+// Compile-only stand-ins for types this library references but must never ship: the real classes
+// belong to the hybrid server and would be shadowed by a copy of ours. This source set is compiled
+// and put on the main compile classpath, and is not part of any artifact.
+sourceSets {
+    stubs
+}
 
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs.add '-parameters' // keeps parameter names on the compiled jar
 }
 
 repositories {
+    mavenCentral()
+    // The sibling FinalCraft libraries resolve from mavenLocal until they are published to
+    // maven.petrus.dev. Filtered so this never shadows another group's resolution.
+    mavenLocal {
+        content {
+            includeGroup "br.com.finalcraft.everylibs"
+            includeModule "br.com.finalcraft", "evernifecore-minecraft"
+        }
+    }
+    maven { url = 'https://maven.minecraftforge.net/' }
+    maven { url = 'https://maven.izzel.io/releases' }   // Arclight
+    maven { url = 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+    maven { url = 'https://maven.petrus.dev/public' }
+    // Local-only jars: hybrid server APIs that are published nowhere.
     flatDir {
         dirs 'libs'
-        dirs 'C:/Users/Petrus/Desktop/Meus/workshop/workshop/PublicLibs/Bukkit'
-        dirs 'C:/Users/Petrus/Desktop/Meus/workshop/workshop/PublicLibs'
+        dirs 'C:/Meus/workshop/workshop/PublicLibs'
+        dirs 'C:/Meus/workshop/workshop/PublicLibs/Bukkit'
     }
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
-    }
-    maven {
-        url = "https://maven.petrus.dev/public"
-    }
-    maven { url 'https://maven.izzel.io/releases' } //Arclight
 }
 
 dependencies {
-    implementation 'io.izzel.arclight:arclight-api:1.3.0'
-
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.34'
-
-    compileOnly "br.com.finalcraft:EverNifeCore:2.0.4"
+    // The Bukkit-side artifact: ECListener's own supertype is a platform class, so the platform-
+    // agnostic evernifecore-common alone does not compile this.
+    compileOnly libs.evernifecore.minecraft
+    compileOnly libs.everylibs.reflection
+    compileOnly libs.log4j.api
+    compileOnly libs.spigot.api
+    compileOnly libs.arclight.api
+    compileOnly libs.forge.eventbus
+    compileOnly sourceSets.stubs.output
 
     compileOnly name: "mohist-1.16.5-api"
     compileOnly name: "catserver-1.16.5-api"
-    compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
 
-    //Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    stubsCompileOnly libs.forge.eventbus
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    // Modern *syntax* compiled down to Java 8 *bytecode*; see the compileJava block below.
+    annotationProcessor libs.jabel
+    compileOnly libs.jabel
+}
+
+// Modern Java source syntax -> Java 8 bytecode. The FinalCraft Jabel fork lifts javac's source-level
+// check so the Java 25 compiler can emit Java 8 bytecode, while `options.release = 8` keeps the API
+// floor honest - no Java 9+ library API can slip into code that has to run on a 1.7.10 server.
+compileJava {
+    sourceCompatibility = 25 // modern *syntax* (IDE hint; Jabel lifts javac's source check)
+    options.release = 8      // Java 8 *bytecode* and *API* floor
+}
+
+// The stubs carry no logic, so they only need to parse and land on the same floor.
+compileStubsJava {
+    options.release = 8
 }
 
 publishing {
@@ -81,34 +104,31 @@ publishing {
             groupId = project.group
             from(components.java)
             pom.withXml {
-                asNode().appendNode('url','https://petrus.dev')
+                asNode().appendNode('url', 'https://petrus.dev')
 
+                // Consumers must not inherit Forge/Arclight/hybrid APIs: every one of them is a
+                // compile-time view of something the running server provides.
                 asNode().dependencies.'*'.each() {
-                    it.parent().remove(it) //Remove all dependencies from pom file
+                    it.parent().remove(it)
                 }
             }
         }
     }
 }
 
-task modifyModuleFile {
+// The Gradle Module file carries the same dependency list the POM above strips, so it has to be
+// emptied too or a consumer resolving through metadata gets what the POM promised it would not.
+tasks.register('stripModuleDependencies') {
     doLast {
-        print "Removing dependencies from module.json publication!"
-        def moduleFile = file("${buildDir}/publications/petrus/module.json")
+        def moduleFile = file("${layout.buildDirectory.get()}/publications/petrus/module.json")
         if (moduleFile.exists()) {
             def moduleJson = new groovy.json.JsonSlurper().parseText(moduleFile.text)
-            moduleJson.variants.each { variant ->
-                variant.dependencies.removeAll { dep ->
-                    true
-                }
-            }
+            moduleJson.variants.each { variant -> variant.dependencies?.clear() }
             moduleFile.text = groovy.json.JsonOutput.toJson(moduleJson)
         }
     }
 }
 
-
-// Ensure the modifyModuleFile task runs after the publication has been generated
 tasks.withType(AbstractPublishToMaven).configureEach {
-    dependsOn modifyModuleFile
+    dependsOn tasks.named('stripModuleDependencies')
 }
