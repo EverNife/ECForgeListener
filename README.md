@@ -1,5 +1,10 @@
 # ECForgeListener
 
+> **Development moved.** This code now lives inside EverNifeCore itself, under
+> `br.com.finalcraft.evernifecore.minecraft.listeners.forge` (same class names, same `ForgeListener`
+> API), and ships in the EverNifeCore jar. This repository and the published
+> `br.com.finalcraft:ECForgeListener` artifact are frozen and receive no further changes.
+
 This is a wrapper intended to be used inside https://github.com/EverNife/EverNifeCore to make my life easier!
 
 It creates a easy way to register event handlers on different types of Forge Platforms.
